@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import dogs from "./dogs";
 import GifLoading from "./assets/load-loading.gif";
 import ButtonDisabled from "./components/ButtonDisabled";
+import AnswerMessage from "./components/AnswerMessage";
 
 function Game() {
   const [dogImage, setDogImage] = useState("");
@@ -12,6 +13,7 @@ function Game() {
   const [questionNumber, setQuestionNumber] = useState(1);
   const [errors, setErrors] = useState(0);
   const ref = useRef(0);
+  const [message, setMessage] = useState<'c' | 'e' | ''>('');
 
   const fetchDogImage = async () => {
     setLoading(true);
@@ -66,62 +68,74 @@ function Game() {
     fetchDogImage();
   }, []);
 
+  const handleAnswer = (selected: string) => {
+    selected === answer ? setMessage('c') : setMessage('e');
+    setTimeout(() => {
+      if (selected === answer) {
+        setScore((prev) => prev + 1);
+        
+      } else {
+        setErrors((prev) => prev + 1);
+      }
+      setQuestionNumber((prev) => prev + 1);
+      fetchDogImage();
+      setMessage("");
+    }, 2000);
+  }
+
   return (
-    <main className="max-w-5xl mx-auto mb-10">
+    <main className="max-w-5xl mx-auto mb-6">
       <div className="text-center">
-        <h1 className="text-5xl mt-7">DogQuiz</h1>
+        <h1 className="text-5xl mt-6">DogQuiz</h1>
         <p className="mt-3">
           Bem-vindo ao "DogQuiz"! <br /> Adivinhe a raça do cão com base na
           foto.
         </p>
       </div>
 
-      <div className="mt-10 flex flex-col items-center text-2xl">
+      <div className="mt-6 flex flex-col items-center text-2xl">
         <span>
           Pontuação: <b>{score}</b>
         </span>
-        <span className="mb-10">
+        <span className="mb-6">
           Erros: <b>{errors}</b>
         </span>
         {loading ? (
           <img
             src={GifLoading}
             alt="loading"
-            className="mx-auto max-h-[350px] max-w-[300px] rounded-sm"
+            className="mx-auto max-h-[300px] max-w-[300px] rounded-sm"
           />
         ) : (
           <img
             src={dogImage}
             alt="dog"
-            className="mx-auto max-h-[350px] max-w-[300px] rounded-sm"
+            className="mx-auto max-h-[300px] max-w-[300px] rounded-sm"
           />
         )}
       </div>
       {loading ? (
-        <div className="mt-10 flex flex-col items-center justify-center">
+        <div className="mt-6 flex flex-col items-center justify-center">
           <ButtonDisabled />
           <ButtonDisabled />
           <ButtonDisabled />
         </div>
       ) : (
-        <div className="mt-10 flex flex-col items-center justify-center">
+        <div className="mt-6 flex flex-col items-center justify-center">
           {options.map((option) => (
             <button
               key={option}
               className="bg-yellow-900 text-white p-3 rounded-md w-[280px] mb-5 text-sm"
+              disabled={message !== ""}
               onClick={() => {
-                if (option === answer) {
-                  setScore(score + 1);
-                } else {
-                  setErrors(errors + 1);
-                }
-                setQuestionNumber(questionNumber + 1);
-                fetchDogImage();
+                handleAnswer(option);
               }}
             >
               {option}
             </button>
           ))}
+          {message === 'c' && <AnswerMessage message={message} correct={answer} />}
+          {message === 'e' && <AnswerMessage message={message} correct={answer} />}
         </div>
       )}
     </main>
