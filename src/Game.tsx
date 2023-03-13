@@ -17,7 +17,7 @@ function Game() {
   const [score, setScore] = useState(scoreStorage ? +scoreStorage : 0);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [errors, setErrors] = useState(errorsStorage ? +errorsStorage : 0);
-  const ref = useRef(0);
+  // const ref = useRef(0);
   const [message, setMessage] = useState<"c" | "e" | "">("");
 
   const fetchDogImage = async () => {
@@ -66,10 +66,10 @@ function Game() {
   };
 
   useEffect(() => {
-    if (ref.current === 0) {
-      ref.current = 1;
-      return;
-    }
+    // if (ref.current === 0) {
+    //   ref.current = 1;
+    //   return;
+    // }
     fetchDogImage();
   }, []);
 
