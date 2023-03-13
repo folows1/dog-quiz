@@ -21,7 +21,7 @@ function Footer() {
         </a>
 
         <a
-          href="https://www.linkedin.com/in/michelribeiro1/"
+          href="https://www.linkedin.com/in/michelribeiro1/?original_referer="
           target="_blank"
           rel="noreferrer"
           className="text-white"

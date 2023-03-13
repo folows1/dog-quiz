@@ -3,17 +3,22 @@ import dogs from "./dogs";
 import GifLoading from "./assets/load-loading.gif";
 import ButtonDisabled from "./components/ButtonDisabled";
 import AnswerMessage from "./components/AnswerMessage";
+import ResetButton from "./components/ResetButton";
+
+const scoreStorage = localStorage.getItem("score");
+const errorsStorage = localStorage.getItem("errors");
+const levelStorage = localStorage.getItem("level");
 
 function Game() {
   const [dogImage, setDogImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState("");
   const [options, setOptions] = useState<string[]>([]);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(scoreStorage ? +scoreStorage : 0);
   const [questionNumber, setQuestionNumber] = useState(1);
-  const [errors, setErrors] = useState(0);
+  const [errors, setErrors] = useState(errorsStorage ? +errorsStorage : 0);
   const ref = useRef(0);
-  const [message, setMessage] = useState<'c' | 'e' | ''>('');
+  const [message, setMessage] = useState<"c" | "e" | "">("");
 
   const fetchDogImage = async () => {
     setLoading(true);
@@ -69,19 +74,26 @@ function Game() {
   }, []);
 
   const handleAnswer = (selected: string) => {
-    selected === answer ? setMessage('c') : setMessage('e');
+    selected === answer ? setMessage("c") : setMessage("e");
     setTimeout(() => {
       if (selected === answer) {
         setScore((prev) => prev + 1);
-        
+        localStorage.setItem("score", (score + 1).toString());
       } else {
         setErrors((prev) => prev + 1);
+        localStorage.setItem("errors", (errors + 1).toString());
       }
       setQuestionNumber((prev) => prev + 1);
       fetchDogImage();
       setMessage("");
-    }, 2000);
-  }
+    }, 1700);
+  };
+
+  const handleReset = () => {
+    setScore(0);
+    setErrors(0);
+    setQuestionNumber(1);
+  };
 
   return (
     <main className="max-w-5xl mx-auto mb-6">
@@ -125,7 +137,7 @@ function Game() {
           {options.map((option) => (
             <button
               key={option}
-              className="bg-yellow-900 text-white p-3 rounded-md w-[280px] mb-5 text-sm"
+              className="bg-yellow-900 text-white p-3 rounded-md w-[280px] mb-5 text-sm hover:bg-yellow-800"
               disabled={message !== ""}
               onClick={() => {
                 handleAnswer(option);
@@ -134,8 +146,13 @@ function Game() {
               {option}
             </button>
           ))}
-          {message === 'c' && <AnswerMessage message={message} correct={answer} />}
-          {message === 'e' && <AnswerMessage message={message} correct={answer} />}
+          {message === "c" && (
+            <AnswerMessage message={message} correct={answer} />
+          )}
+          {message === "e" && (
+            <AnswerMessage message={message} correct={answer} />
+          )}
+          {message === "" && <ResetButton handleReset={handleReset} />}
         </div>
       )}
     </main>
