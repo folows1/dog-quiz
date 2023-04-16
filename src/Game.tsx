@@ -122,7 +122,7 @@ function Game() {
           <img
             src={dogImage}
             alt="dog"
-            className="mx-auto max-h-[300px] max-w-[300px] rounded-sm"
+            className="mx-auto max-h-[300px] max-w-[300px] rounded-sm object-cover"
           />
         )}
       </div>
